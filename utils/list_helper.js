@@ -6,10 +6,7 @@ const totalLikes = (list) => {
 
 const favoriteBlog = (list) => {
   return list.reduce((favBlog, current) => {
-    if (favBlog.likes <= current.likes) {
-      return current;
-    }
-    return favBlog;
+    return favBlog.likes <= current.likes ? current : favBlog;
   });
 };
 
