@@ -14,3 +14,7 @@ test("blogs are returned as json", async () => {
         expect(res.body).toHaveLength(2);
       });
   });
+
+afterAll(() => {
+  mongoose.connection.close();
+});
