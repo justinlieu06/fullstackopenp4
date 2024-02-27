@@ -11,7 +11,8 @@ test("blogs are returned as json", async () => {
       .expect("Content-Type", /application\/json/)
       .expect((res) => {
         console.log(typeof res.body, res.body);
-        expect(res.body).toHaveLength(2);
+        // expect(res.body).toHaveLength(2);
+        assert.strictEqual(res.body.length,2);
       });
   });
 
