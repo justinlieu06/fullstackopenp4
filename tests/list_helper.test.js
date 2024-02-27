@@ -153,6 +153,6 @@ describe("favorite blog", () => {
   test("when list has many blogs, return blog with most likes", () => {
     const result = listHelper.favoriteBlog(testData);
     // expect(result).toBe(testData[2]);
-    assert.strictEqual(result, testData[2]);
+    assert.deepStrictEqual(result, testData[2]);
   });
 });
