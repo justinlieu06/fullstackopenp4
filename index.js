@@ -1,3 +1,4 @@
+// role of index.js is just to launch the application at the specified port
 const app = require("./app"); // the actual Express application
 const http = require("http");
 const config = require("./utils/config");

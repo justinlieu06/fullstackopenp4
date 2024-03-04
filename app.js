@@ -1,3 +1,4 @@
+// one role of this is extract the express app
 const express = require("express");
 const app = express();
 const cors = require("cors");
