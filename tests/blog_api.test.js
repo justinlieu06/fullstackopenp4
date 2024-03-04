@@ -12,6 +12,13 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+// correct location?
+test('there are two blogs', async () => {
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, 2)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
