@@ -23,7 +23,7 @@ test('the first blog is about HTTP methods', async () => {
     const response = await api.get('/api/blogs')
 
     const contents = response.body.map(e => e.content)
-    assert.strictEqual(contents.includes('HTML is easy'), true)
+    assert(contents.includes('HTML is easy'))
 })
 
 after(async () => {
