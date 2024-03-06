@@ -25,7 +25,16 @@ beforeEach(async () => {
     await personObject.save()
 })
 
-test('blogs are returned as json', async () => {
+/* can run just the "only" tests by using npm test -- --test-only
+another option is to remove only and specify in command line which tests to run such as npm test -- tests/blog_api.test.js which only runs tests in blog_api
+
+The --tests-by-name-pattern option can be used for running tests with a specific name:
+npm test -- --test-name-pattern="the first blog is about HTTP methods"
+
+You can also just run tests that have blogs in the name:
+npm run test -- --test-name-pattern="notes"
+*/
+test.only('blogs are returned as json', async () => {
   await api
     .get('/api/blog')
     .expect(200)
@@ -33,10 +42,10 @@ test('blogs are returned as json', async () => {
 })
 
 // correct location?
-test('there are two blogs', async () => {
+test.only('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, 2)
+    assert.strictEqual(response.body.length, initialPersons.length)
 })
 
 test('the first blog is about HTTP methods', async () => {
