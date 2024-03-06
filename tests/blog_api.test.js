@@ -1,9 +1,29 @@
-const { test, after } = require('node:test')
+const { test, after, beforeEach } = require('node:test')
+const Person = require('.../models/person')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 
 const api = supertest(app)
+
+const initialPersons = [
+    {
+        name: 'Levi',
+        number: '101520',
+    },
+    {
+        name: 'Bowser',
+        number: '185043'
+    }
+]
+
+beforeEach(async () => {
+    await Person.deleteMany({})
+    let personObject = new Person(initialPersons[0])
+    await personObject.save()
+    personObject = new Person(initialPersons[1])
+    await personObject.save()
+})
 
 test('blogs are returned as json', async () => {
   await api
