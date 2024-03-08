@@ -55,6 +55,27 @@ test('the first blog is about HTTP methods', async () => {
     assert(contents.includes('HTML is easy'))
 })
 
+test('a valid blog can be added ', async () => {
+    const newNote = {
+        name: 'async/await simplifies making async calls',
+        number: '148031092',
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newNote)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const contents = response.body.map(r => r.content)
+
+    assert.strictEqual(response.body.length, initialBlogs.length + 1)
+
+    assert(contents.includes('async/await simplifies making async calls'))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
