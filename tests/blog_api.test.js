@@ -1,28 +1,17 @@
 const { test, after, beforeEach } = require('node:test')
-const Person = require('.../models/person')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
-const initialPersons = [
-    {
-        name: 'Levi',
-        number: '101520',
-    },
-    {
-        name: 'Bowser',
-        number: '185043'
-    }
-]
-
 beforeEach(async () => {
-    await Person.deleteMany({})
-    let personObject = new Person(initialPersons[0])
-    await personObject.save()
-    personObject = new Person(initialPersons[1])
-    await personObject.save()
+    await Blog.deleteMany({})
+    let blogObject = new Blog(helper.initialBlogs[0])
+    await blogObject.save()
+    blogObject = new Blog(helper.initialBlogs[1])
+    await blogObject.save()
 })
 
 /* can run just the "only" tests by using npm test -- --test-only
@@ -41,11 +30,17 @@ test.only('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+})
+
 // correct location?
 test.only('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, initialPersons.length)
+    assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 test('the first blog is about HTTP methods', async () => {
@@ -56,29 +51,30 @@ test('the first blog is about HTTP methods', async () => {
 })
 
 test('a valid blog can be added ', async () => {
-    const newNote = {
-        name: 'async/await simplifies making async calls',
-        number: '148031092',
+    const newBlog = {
+        title: 'async/await simplifies making async calls',
+        author: '148031092',
+        url: 'dasl',
+        likes: 5
     }
 
     await api
         .post('/api/blogs')
-        .send(newNote)
+        .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-
-    const contents = response.body.map(r => r.content)
-
-    assert.strictEqual(response.body.length, initialBlogs.length + 1)
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+    
+    const contents = blogsAtEnd.map(n => n.content)
 
     assert(contents.includes('async/await simplifies making async calls'))
 })
 
-test('blog without name is not added', async () => {
+test('blog without title is not added', async () => {
     const newBlog = {
-        number: '183200094'
+        author: '183200094'
     }
 
     await api
@@ -86,9 +82,9 @@ test('blog without name is not added', async () => {
         .send(newBlog)
         .expect(400)
 
-    const response = await api.get('/api/blogs')
+    const blogsAtEnd = await helper.blogsInDb()
 
-    assert.strictEqual(response.body.length, initialBlogs.length)
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 })
 
 after(async () => {
