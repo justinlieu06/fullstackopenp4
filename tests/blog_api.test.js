@@ -76,6 +76,21 @@ test('a valid blog can be added ', async () => {
     assert(contents.includes('async/await simplifies making async calls'))
 })
 
+test('blog without name is not added', async () => {
+    const newBlog = {
+        number: '183200094'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, initialBlogs.length)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
