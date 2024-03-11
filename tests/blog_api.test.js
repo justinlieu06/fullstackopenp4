@@ -30,6 +30,19 @@ test.only('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('a specific blog can be viewed', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+  
+    const blogToView = blogsAtStart[0]
+  
+    const resultBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  
+    assert.deepStrictEqual(resultBlog.body, blogToView)
+  })
+
 test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
