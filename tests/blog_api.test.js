@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt'
+
 const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -11,6 +13,16 @@ const api = supertest(app)
 beforeEach(async () => {
     await Blog.deleteMany({})
     await User.deleteMany({})
+
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(helper.initialUser.password, saltRounds)
+
+    const user = new User({
+        "username": helper.initialUser.username,
+        "name": helper.initialUser.name,
+        passwordHash,
+    })
+    const savedUser = await user.save()
 
     const blogObjects = helper.initialBlogs
         .map(blog => new Blog(blog))
