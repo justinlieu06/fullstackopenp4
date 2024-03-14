@@ -4,11 +4,14 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const { Blog } = require('../models/blogs')
+const { User } = require('../models/user')
 
 const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
+
     const blogObjects = helper.initialBlogs
         .map(blog => new Blog(blog))
     const promiseArray = blogObjects.map(blog => blog.save())

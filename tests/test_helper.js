@@ -15,6 +15,8 @@ const initialBlogs = [
     }
 ]
 
+const initialUser = { "username": "test1", "name": "test1", "password": "test1" }
+
 const nonExistingId = async () => {
     const blog = new Blog({ content: 'willremovethissoon' })
     await blog.save()
@@ -29,5 +31,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-initialBlogs, nonExistingId, blogsInDb
+initialBlogs, initialUser, nonExistingId, blogsInDb
 }
