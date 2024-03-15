@@ -117,6 +117,81 @@ test('blog without title is not added', async () => {
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
 })
 
+describe('With logining status', () => {
+    let token = null
+  
+    const newBlog = {
+      "title": "Canonical string reduction",
+      "author": "Edsger W. Dijkstra",
+      "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+      "likes": 12
+    }
+  
+    beforeEach(async () => {
+      const returnedBody = await api.post('/api/login').send({
+        "username": "test1",
+        "password": "test1"
+      })
+  
+      token = returnedBody.body.token
+    })
+  
+    test('a valid blog can be added', async () => {
+      await api
+        .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
+        .send(newBlog)
+        .expect(201)
+  
+      const response = await api.get('/api/blogs')
+      const result = response.body.map(r => r.title)
+  
+      expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+      expect(result).toContain('Canonical string reduction')
+    })
+  
+    test('a blog missed likes attribute can be the default value', async () => {
+      const newBlogPart = {
+        "title": newBlog.title,
+        "author": newBlog.author,
+        "url": newBlog.url,
+      }
+  
+      const response = await api
+        .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
+        .send(newBlogPart)
+      expect(response.body.likes).toBe(0)
+    })
+  
+    test('a invalid blog missed title and url can be returned 400 status', async () => {
+      const newBlogPart = {
+        "author": newBlog.author,
+        "likes": 0,
+      }
+  
+      await api
+        .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
+        .send(newBlogPart)
+        .expect(400)
+    })
+  
+    test('unauthorized blog can be returned 401 status', async () => {
+      const newBlogPart = {
+        "title": newBlog.title,
+        "author": newBlog.author,
+        "url": newBlog.url
+      }
+  
+      await api
+        .post('/api/blogs')
+        .send(newBlogPart)
+        .expect(401)
+    })
+})
+  
+
 after(async () => {
   await mongoose.connection.close()
 })
