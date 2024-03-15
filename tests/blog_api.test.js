@@ -62,7 +62,8 @@ test('a specific blog can be viewed', async () => {
 test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    // assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
 // correct location?
